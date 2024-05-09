@@ -1,5 +1,4 @@
 package org.example;
-import javax.swing.*;
 import java.sql.*;
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -17,6 +16,11 @@ public class Main {
     static int eleccion;
     private  static Connection con = conectar();
      static Statement instrucion= crearStatement(con);
+
+    /**
+     * Metodo que hace la conexion a la base datos
+     * @return Si da una excepcion no retorna nada
+     */
     private static Connection conectar() {
         try {
             return DriverManager.getConnection(url, user, password);
@@ -25,14 +29,26 @@ public class Main {
             return null;
         }//Fin try-catch
     }//Fin de conectar
+
+    /**
+     * Metodo que crea el Statement que se usara para hacer consultas,inserciones y delete
+     * @param con La conexion a la base de datos
+     * @return Si da una  excepcion no retorna nada
+     */
     private static Statement crearStatement(Connection con) {
         try {
             return con.createStatement();
         } catch (SQLException e) {
             System.out.println("Error al crear el statement: " + e.getMessage());
             return null;
-        }
+        }//Fin try-catch
     }//Fin crearStament
+
+    /**
+     * Metodo que te realiza una consulta
+     * @param instruccion Statement que realiza la consulta
+     * @param consulta La consulta para obtener la información
+     */
     private static void hacerConsulta(Statement instruccion, String consulta) {
         try {
             ResultSet resultado = instruccion.executeQuery(consulta);
@@ -61,11 +77,17 @@ public class Main {
         }
     }//Fin de hacerConsulta
 
+    /**
+     * Metodo que hace la consulta de la suma de salarios
+     * @param instruccion Statement que realizara la consulata
+     * @param consulta Consulta con la funcion sum()
+     * @throws SQLException si la insercion esta mal hecha
+     */
     private static void hacerConsultaSuma(Statement instruccion, String consulta) {
         try {
             ResultSet resultado = instruccion.executeQuery(consulta);
                 while (resultado.next()) {
-                  int salario = resultado.getInt("Total");
+                  double salario = resultado.getInt("Total");
                     System.out.println("Suma total del salario: " + salario);
                 }//Fin while
                 resultado.close();
@@ -73,21 +95,43 @@ public class Main {
             System.out.println("Error al hacer la consulta: " + e.getMessage());
         }
     }//Fin de hacerConsulta
-    private static void Insertarempleado(Statement instruccion, String consulta) {
+
+    /**
+     * Metodo que hace una insercion
+     * @param instruccion Statement que realizara la insercion
+     * @param insercion Insercion del nuevo empleado
+     * @throws SQLException si la insercion esta mal hecha
+     */
+    private static void Insertarempleado(Statement instruccion, String insercion) {
         try {
-            ResultSet resultado = instruccion.executeQuery(consulta);
-        } catch (SQLException e) {
-            System.out.println("Error al hacer la consulta: " + e.getMessage());
-        }//Fin try-catch
-    }//Fin de hacerConsulta
-    private static void InsertarempleadoC(Statement instruccion, String consulta) {
-        try {
-            int filasAfectadas = instruccion.executeUpdate(consulta);
+            int filasAfectadas = instruccion.executeUpdate(insercion);
             System.out.println("Se ha insertado corectamente " + filasAfectadas+" fila");
         } catch (SQLException e) {
             System.out.println("Error al hacer la consulta: " + e.getMessage());
         }
-    }
+    }//Fin InsertarEmpleado
+
+    /**
+     * Metodo que realiza la consulta de elimnar
+     * @param instruccion Statement que realiza el delete
+     * @param consulta Delete del registro
+     * @throws SQLException si el delete esta mal hecho
+     */
+    private static void eliminarEmpleado(Statement instruccion, String consulta) {
+        try {
+            int filasAfectadas = instruccion.executeUpdate(consulta);
+            System.out.println("Se ha eliminado corectamente " + filasAfectadas+" fila");
+        } catch (SQLException e) {
+            System.out.println("Error al hacer la consulta: " + e.getMessage());
+        }
+    }//Fin EliminarEmpleado
+
+    /**
+     * Metodo cierra la conexion
+     * @param con Conexion a la base de datos
+     * @param instruccion Staement que realiza las acciones a la base de datos
+     * @throws SQLException si la insercion esta mal hecha
+     */
     private static void cerrar(Connection con, Statement instruccion) {
         try {
             instruccion.close();
@@ -175,15 +219,22 @@ public class Main {
          * Este metodo elimina un empleado que se desee
          * @param scanner -El scanner que se necesita para los inputs
          */
-        public static void eliminarEmpleado(Scanner scanner) {
-            try {
-
-            } catch (InputMismatchException e) {
-                System.out.println("Error: No se puede ingresar algo que no sea una cadena de carácteres");
-                scanner.nextLine();
-            }
-        }
-
+    public static void eliminarEmpleado(Scanner scanner) {
+        try {
+            System.out.println("¿Qué empleado quieres eliminar?");
+            String empleadoEliminado = scanner.nextLine();
+            LocalDate fecha_de_finalizacion = LocalDate.now();
+            String consulta1 = "INSERT INTO empleadosAntiguos (nombre, apellidos, fecha_de_nacimiento, fecha_de_ingreso, fecha_de_finalizacion) " +
+                    "SELECT nombre, apellidos, fecha_de_nacimiento, fecha_de_ingreso, '" + fecha_de_finalizacion + "' " +
+                    "FROM empleados WHERE nombre = '" + empleadoEliminado + "'";
+            Insertarempleado(instrucion, consulta1);
+            String consulta2 = "DELETE FROM empleados WHERE nombre = '" + empleadoEliminado + "'";
+            eliminarEmpleado(instrucion, consulta2);
+        } catch (InputMismatchException e) {
+            System.out.println("Error: No se puede ingresar algo que no sea una cadena de caracteres");
+            scanner.nextLine();
+        }//Fin try-catch
+    }
         /**
          * Menu que genera varias opciones para ordenar el arraylist
          * @param scanner -El scanner para introducir la opcion
@@ -207,7 +258,7 @@ public class Main {
                         hacerConsulta(instrucion,consultasalario);
                         break;
                     case 3:
-                        String consultaApellido = "Select * from empleados order by salario";
+                        String consultaApellido = "Select * from empleados order by apellidos";
                         hacerConsulta(instrucion,consultaApellido);
                         break;
                     default:
@@ -334,7 +385,7 @@ public class Main {
             }while (salario ==0);
           String consulta= "Insert into empleados values("+"'"+nombre+"'"+","+"'"+apellidos+"'"+","
                   +"'"+fechaDeIngreso+"'"+","+"'"+fechaDeNacimiento+"'"+","+"'"+puesto+"'"+","+salario+")";
-         InsertarempleadoC(instrucion,consulta);
+         Insertarempleado(instrucion,consulta);
         }//Fin de añadirEmpleado
 
         /**
