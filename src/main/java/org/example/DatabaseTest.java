@@ -55,30 +55,6 @@ public class DatabaseTest {
     }
 
     public static void main(String[] args) {
-        /*String url = "jdbc:mysql://192.168.80.153:3306/prueba";
-        String user = "manuel";
-        String password = "Opassword78%";
-        try (Connection con = DriverManager.getConnection(url, user, password)) {
-            Statement instrution = con.createStatement();
-            System.out.println("Conexión exitosa!");//Creo un Statemet instruction para hacer consultas, inserciones ,etc
-
-        String consulta = "SELECT * FROM personas";
-        ResultSet resultado = instrution.executeQuery(consulta);
-         while(resultado.next()){
-               String nombre = resultado.getString("Nombre");
-               System.out.println(nombre);
-                String apellido = resultado.getString("apellidos");
-                   System.out.println(apellido);
-                   int telefono= resultado.getInt("teléfono");
-                   System.out.println(telefono);
-            }//Fin while
-        resultado.close();
-        instrution.close();
-        con.close();
-
-        } catch (SQLException e) {
-            System.out.println("Error en la conexión: " + e.getMessage());
-        }//Fin try-cath*/
         Connection con = conectar();
         Statement instrucion = crearStatement(con);
         hacerConsulta(instrucion);

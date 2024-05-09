@@ -93,7 +93,7 @@ public class Main {
                 resultado.close();
         } catch (SQLException e) {
             System.out.println("Error al hacer la consulta: " + e.getMessage());
-        }
+        }//Fin try-catch
     }//Fin de hacerConsulta
 
     /**
@@ -108,7 +108,7 @@ public class Main {
             System.out.println("Se ha insertado corectamente " + filasAfectadas+" fila");
         } catch (SQLException e) {
             System.out.println("Error al hacer la consulta: " + e.getMessage());
-        }
+        }//Fin try-catch
     }//Fin InsertarEmpleado
 
     /**
@@ -123,7 +123,7 @@ public class Main {
             System.out.println("Se ha eliminado corectamente " + filasAfectadas+" fila");
         } catch (SQLException e) {
             System.out.println("Error al hacer la consulta: " + e.getMessage());
-        }
+        }//Fin try-catch
     }//Fin EliminarEmpleado
 
     /**
@@ -140,8 +140,6 @@ public class Main {
             System.out.println("Error al cerrar la conexión: " + e.getMessage());
         }//Fin try-catch
     }//Fin cerrar
-
-
 
         /**
          * Metodo que genera un menu de las diferentes opciones que tienes para utilizar
