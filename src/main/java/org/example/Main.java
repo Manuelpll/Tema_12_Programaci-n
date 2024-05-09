@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 /**
- * Este programa trata de un menu de los empleados donde puedes añadir,eliminar , mostrar los que hay y ordenar la lista de diferentes maneras
+ * Este programa trata de un menu  con varias opciones entorno a una base de datos llamada empresa
  * @author Mparr
  * @version 1.0
  */
@@ -83,7 +83,7 @@ public class Main {
     private static void InsertarempleadoC(Statement instruccion, String consulta) {
         try {
             int filasAfectadas = instruccion.executeUpdate(consulta);
-            System.out.println("Filas afectadas: " + filasAfectadas);
+            System.out.println("Se ha insertado corectamente " + filasAfectadas+" fila");
         } catch (SQLException e) {
             System.out.println("Error al hacer la consulta: " + e.getMessage());
         }
